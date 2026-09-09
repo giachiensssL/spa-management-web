@@ -125,7 +125,11 @@ Chỉ chọn dịch vụ có trong danh sách. Tất cả lý do phải viết b
           if (parsed.suggestions && Array.isArray(parsed.suggestions) && parsed.suggestions.length <= 2) {
             // Validate services exist
             const validSvcs = parsed.suggestions.filter((s: { name: string }) =>
-              (available_services ?? []).some((sv: { name: string }) => sv.name === s.name)
+              (available_services ?? []).some((sv: { name: string }) => 
+                sv.name.trim().toLowerCase() === s.name.trim().toLowerCase() || 
+                s.name.trim().toLowerCase().includes(sv.name.trim().toLowerCase()) ||
+                sv.name.trim().toLowerCase().includes(s.name.trim().toLowerCase())
+              )
             );
             if (validSvcs.length > 0) {
               outputData = { suggestions: validSvcs };
