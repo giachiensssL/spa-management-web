@@ -110,48 +110,30 @@ Nhu cầu hiện tại: ${customer_need || "Không xác định"}
 Danh sách dịch vụ có sẵn:
 ${svcList}
 
-Hãy gợi ý tối đa 2 dịch vụ phù hợp nhất cho khách hàng từ danh sách trên.
-Trả về kết quả dưới dạng JSON hợp lệ với định dạng:
-{"suggestions": [{"name": "tên dịch vụ", "reason": "lý do gợi ý bằng tiếng Việt"}]}
+Hãy gợi ý tối đa 2 dịch vụ cho khách hàng từ danh sách trên.
+QUAN TRỌNG: Nếu nhu cầu của khách (VD: giảm cân) KHÔNG có trong danh sách dịch vụ, hãy chọn 2 dịch vụ khác (VD: Massage body) để thay thế. Trong phần "reason", hãy khéo léo nói rõ rằng "Spa hiện chưa có dịch vụ [nhu cầu], nhưng gợi ý dịch vụ này để giúp khách thư giãn/thay thế...".
 
-Chỉ chọn dịch vụ có trong danh sách. Tất cả lý do phải viết bằng tiếng Việt.`;
+Trả về KẾT QUẢ DUY NHẤT là định dạng JSON hợp lệ:
+{"suggestions": [{"name": "tên dịch vụ trích từ danh sách", "reason": "lý do gợi ý bằng tiếng Việt"}]}
+`;
 
       try {
         const aiResult = await callAI(promptUsed);
-        // Try to parse JSON from response
         const jsonMatch = aiResult.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
-          if (parsed.suggestions && Array.isArray(parsed.suggestions) && parsed.suggestions.length <= 2) {
-            // Validate services exist
-            const validSvcs = parsed.suggestions.filter((s: { name: string }) =>
-              (available_services ?? []).some((sv: { name: string }) => 
-                sv.name.trim().toLowerCase() === s.name.trim().toLowerCase() || 
-                s.name.trim().toLowerCase().includes(sv.name.trim().toLowerCase()) ||
-                sv.name.trim().toLowerCase().includes(s.name.trim().toLowerCase())
-              )
-            );
-            if (validSvcs.length > 0) {
-              outputData = { suggestions: validSvcs };
-              outputContent = validSvcs.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
-            } else {
-              const fb = fallbackRecommend(available_services, customer?.full_name);
-              outputData = fb;
-              outputContent = fb.suggestions.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
-            }
+          if (parsed.suggestions && Array.isArray(parsed.suggestions)) {
+             outputData = { suggestions: parsed.suggestions };
+             outputContent = parsed.suggestions.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
           } else {
-            const fb = fallbackRecommend(available_services, customer?.full_name);
-            outputData = fb;
-            outputContent = fb.suggestions.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
+             throw new Error("Invalid AI format");
           }
         } else {
-          const fb = fallbackRecommend(available_services, customer?.full_name);
-          outputData = fb;
-          outputContent = fb.suggestions.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
+          throw new Error("No JSON found");
         }
-      } catch {
-        const fb = fallbackRecommend(available_services, customer?.full_name);
-        outputData = fb;
+      } catch (err) {
+        outputData = fallbackRecommend(available_services, customer?.full_name);
+
         outputContent = fb.suggestions.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
       }
     } else if (action === "generate-message") {
