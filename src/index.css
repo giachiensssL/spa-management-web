@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-ivory text-charcoal-700 font-sans antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply px-4 py-2 bg-white text-charcoal-600 border border-charcoal-200 rounded-lg font-medium hover:bg-charcoal-50 transition-colors;
+  }
+  .btn-ghost {
+    @apply px-3 py-2 text-charcoal-500 rounded-lg font-medium hover:bg-charcoal-50 transition-colors;
+  }
+  .input-field {
+    @apply w-full px-3.5 py-2.5 bg-white border border-charcoal-200 rounded-lg text-charcoal-700 placeholder-charcoal-300 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300 transition-all;
+  }
+  .label-field {
+    @apply block text-sm font-medium text-charcoal-600 mb-1.5;
+  }
+  .card {
+    @apply bg-white rounded-xl shadow-card border border-charcoal-100;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border;
+  }
+  .table-row-hover {
+    @apply transition-colors hover:bg-ivory;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1CCC6;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B0A89E;
+}
