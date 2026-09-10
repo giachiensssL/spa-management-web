@@ -20,7 +20,7 @@ INSERT INTO employees (full_name, phone, email, position, specialty, working_hou
 ('Trần Thu Trang', '0902345678', 'trang@serenespa.vn', 'Kỹ thuật viên', 'Massage body', '9:00 - 18:00', '2021-07-01', 11000000, 'active'),
 ('Lê Ngọc Anh', '0903456789', 'anh@serenespa.vn', 'Lễ tân', 'Chăm sóc khách hàng', '8:00 - 16:00', '2023-01-10', 8000000, 'active'),
 ('Phạm Thị Dung', '0904567890', 'dung@serenespa.vn', 'Kỹ thuật viên', 'Gội đầu dưỡng sinh', '10:00 - 19:00', '2022-11-20', 10500000, 'active'),
-('Hoàng Thị Mai', '0905678901', 'mai@serenespa.vn', 'Quản lý', 'Quản lý spa', '8:00 - 18:00', '2020-05-01', 20000000, 'active')
+('Dương Dương', '0905678901', 'duong@serenespa.vn', 'Quản lý', 'Quản lý spa', '8:00 - 18:00', '2020-05-01', 20000000, 'active')
 ON CONFLICT DO NOTHING;
 
 -- ============ SERVICES ============

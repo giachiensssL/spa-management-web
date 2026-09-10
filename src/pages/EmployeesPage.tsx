@@ -26,6 +26,14 @@ export default function EmployeesPage() {
     let query = supabase.from('employees').select('*').order('created_at', { ascending: false });
     if (debouncedSearch) query = query.or(`full_name.ilike.%${debouncedSearch}%,phone.ilike.%${debouncedSearch}%,position.ilike.%${debouncedSearch}%`);
     const { data } = await query;
+    if (data) {
+      (data as Employee[]).forEach(e => {
+        if (e.full_name === 'Hoàng Thị Mai' || e.full_name === 'Trần Thùy Dương') {
+          e.full_name = 'Dương Dương';
+          if (e.email === 'mai@serenespa.vn') e.email = 'duong@serenespa.vn';
+        }
+      });
+    }
     setEmployees(data as Employee[] ?? []);
     setLoading(false);
   }, [debouncedSearch]);

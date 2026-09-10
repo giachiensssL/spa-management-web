@@ -132,8 +132,8 @@ Trả về KẾT QUẢ DUY NHẤT là định dạng JSON hợp lệ:
           throw new Error("No JSON found");
         }
       } catch (err) {
-        outputData = fallbackRecommend(available_services, customer?.full_name);
-
+        const fb = fallbackRecommend(available_services, customer?.full_name);
+        outputData = fb;
         outputContent = fb.suggestions.map((s: { name: string; reason: string }, i: number) => `Gợi ý ${i + 1}: ${s.name}\nLý do: ${s.reason}`).join("\n\n");
       }
     } else if (action === "generate-message") {
@@ -198,6 +198,26 @@ Kết thúc bằng "Không tư vấn y khoa."`;
         outputContent = `Tổng quan: Khách hàng ${customer?.full_name ?? ""} với ${appointments?.length ?? 0} lịch hẹn và ${invoices?.length ?? 0} hóa đơn. Điểm tích lũy: ${customer?.loyalty_points ?? 0}.\nDịch vụ thường sử dụng: Chưa đủ dữ liệu để phân tích chi tiết.\nLần sử dụng gần nhất: Xem lịch sử lịch hẹn.\nTần suất sử dụng: Cần thêm dữ liệu.\nGhi chú quan trọng: ${customer?.notes ?? "Không có"}.\n\nKhông tư vấn y khoa.`;
       }
       outputData = { summary: outputContent };
+    } else if (action === "chat") {
+      const { message, customer, available_services } = body;
+      const svcList = (available_services ?? []).map((s: { name: string; description: string | null; price: number }) => `- ${s.name} (${s.price} VND): ${s.description ?? ""}`).join("\n");
+      
+      promptUsed = `Người dùng hỏi: ${message}
+      
+Thông tin Khách hàng đang chọn (nếu có): ${customer ? customer.full_name : "Không có"}
+
+Danh sách dịch vụ của spa:
+${svcList}
+
+Hãy trả lời câu hỏi của người dùng như một trợ lý AI chuyên nghiệp của spa.
+Kết thúc bằng "Không tư vấn y khoa."`;
+      
+      try {
+        outputContent = await callAI(promptUsed);
+      } catch {
+        outputContent = "Xin lỗi, tôi không thể trả lời lúc này. Vui lòng thử lại sau. Không tư vấn y khoa.";
+      }
+      outputData = { message: outputContent };
     } else {
       return new Response(JSON.stringify({ error: "Hành động không hợp lệ." }), {
         status: 400,

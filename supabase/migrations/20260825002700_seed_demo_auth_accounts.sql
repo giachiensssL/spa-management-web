@@ -71,7 +71,7 @@ SELECT
   employee.id,
   employee.full_name
 FROM (VALUES
-  ('manager@spa.vn', 'manager', 'Hoàng Thị Mai'),
+  ('manager@spa.vn', 'manager', 'Dương Dương'),
   ('receptionist@spa.vn', 'receptionist', 'Lê Ngọc Anh'),
   ('therapist@spa.vn', 'therapist', 'Nguyễn Thị Hương')
 ) AS demo(email, role, employee_name)

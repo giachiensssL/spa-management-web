@@ -53,7 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', user.id)
         .maybeSingle();
       if (active) {
-        setProfile(data as Profile | null);
+        const p = data as Profile | null;
+        if (p && (p.full_name === 'Hoàng Thị Mai' || p.full_name === 'Trần Thùy Dương')) {
+          p.full_name = 'Dương Dương';
+        }
+        setProfile(p);
         setLoading(false);
       }
       if (error) console.error('Profile load error:', error);
